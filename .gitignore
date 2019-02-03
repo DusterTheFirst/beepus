@@ -1,0 +1,11 @@
+# Dependencies
+node_modules
+
+# Build files
+build
+
+# Config
+config.json
+
+# DB
+*.sqlite

@@ -1,0 +1,28 @@
+{
+    "name": "beepus",
+    "version": "0.0.1",
+    "description": "A cool bot that does things",
+    "main": "build/app.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/DusterTheFirst/beepus.git"
+    },
+    "keywords": [
+        "beepus"
+    ],
+    "author": "DusterTheFirst <dusterthefirst@gmail.com> (Zachary Kohnen)",
+    "license": "GPL-3.0",
+    "bugs": {
+        "url": "https://github.com/DusterTheFirst/beepus/issues"
+    },
+    "homepage": "https://github.com/DusterTheFirst/beepus#readme",
+    "devDependencies": {
+        "@types/node": "^10.12.21",
+        "tslint": "^5.12.1",
+        "typescript": "^3.3.1"
+    },
+    "dependencies": {
+        "chalk": "^2.4.2",
+        "discord.js": "^11.4.2"
+    }
+}
