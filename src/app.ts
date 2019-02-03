@@ -61,6 +61,7 @@ client.on("message", (message) => {
 
 client.on("guildMemberAdd", (member) => {
     // Auto assign roles
+    // TODO: WAIT TILL HALL PASS
     member.addRoles(config.roles.autoAssign);
 
     // Welcome them to the server
