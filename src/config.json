@@ -12,7 +12,8 @@
         "Zoe Zhang": "382363770401587201"
     },
     "messages": {
-        "everyone": "**Shush!**\n\nIf you want to mention a specific group, please use their role.\nIf you really meant to mention everyone then continue on with your day, otherwise you should feel bad about annoying these nice people.",
-        "welcome": "**Hello there!** Welcome to the server!\nThis server is for the most elite of the elite so you must confirm your identity first.\nTo confirm your identity please reply with a message or messages about you: who you are, who invited you, why you are gonna be here and so on.\nYour greatness will then be put up for review by one of our overloards.\n\nThank you,\n\t*beepus*"
-    }
+        "everyone": "**Shush!**\n\nIf you want to mention a specific group, please use their role.\nIf you really meant to mention everyone then continue on with your day, otherwise you should feel bad about annoying these nice people."
+    },
+    "expires": "10 min",
+    "host": "http://localhost:8080"
 }

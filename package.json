@@ -17,12 +17,16 @@
     },
     "homepage": "https://github.com/DusterTheFirst/beepus#readme",
     "devDependencies": {
+        "@types/express": "^4.16.1",
+        "@types/jsonwebtoken": "^8.3.0",
         "@types/node": "^10.12.21",
         "tslint": "^5.12.1",
         "typescript": "^3.3.1"
     },
     "dependencies": {
         "chalk": "^2.4.2",
-        "discord.js": "^11.4.2"
+        "discord.js": "^11.4.2",
+        "express": "^4.16.4",
+        "jsonwebtoken": "^8.4.0"
     }
 }
