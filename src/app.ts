@@ -31,7 +31,7 @@ client.on("ready", async () => {
     // TODO: REMOVE
     await welcomeFlow(guild.member("168827261682843648"));
 
-    guild.members.forEach(x => x.removeRole(config.roles.hallpass));
+    guild.members.forEach(async x => x.removeRole(config.roles.hallpass));
 });
 
 // TODO: VOICE MEME FORTNIGHT
