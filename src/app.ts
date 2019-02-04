@@ -5,6 +5,7 @@
 import chalk from "chalk";
 import { Client } from "discord.js";
 import config from "./config.json";
+import secrets from "./secrets.json";
 
 const client = new Client();
 
@@ -68,4 +69,4 @@ client.on("guildMemberAdd", (member) => {
     member.send(config.messages.welcome);
 });
 
-client.login(config.token);
+client.login(secrets.token);

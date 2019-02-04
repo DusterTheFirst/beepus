@@ -1,0 +1,18 @@
+{
+    "server": "402229090624733184",
+    "roles": {
+        "autoAssign": [
+            "540916019380617237",
+            "540921348390649866"
+        ],
+        "hallpass": "540917166879539210"
+    },
+    "owners": {
+        "Zach Kohnen": "168827261682843648",
+        "Zoe Zhang": "382363770401587201"
+    },
+    "messages": {
+        "everyone": "**Shush!**\n\nIf you want to mention a specific group, please use their role.\nIf you really meant to mention everyone then continue on with your day, otherwise you should feel bad about annoying these nice people.",
+        "welcome": "**Hello there!** Welcome to the server!\nThis server is for the most elite of the elite so you must confirm your identity first.\nTo confirm your identity please reply with a message or messages about you: who you are, who invited you, why you are gonna be here and so on.\nYour greatness will then be put up for review by one of our overloards.\n\nThank you,\n\t*beepus*"
+    }
+}
