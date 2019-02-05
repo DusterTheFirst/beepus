@@ -4,8 +4,8 @@
 
 import { User } from "discord.js";
 import jwt from "jsonwebtoken";
-import config from "./config/config.json";
-import secrets from "./config/secrets.json";
+import config from "../config/config.json";
+import secrets from "../config/secrets.json";
 
 export interface IJWTMeta {
     /** The expiration time */

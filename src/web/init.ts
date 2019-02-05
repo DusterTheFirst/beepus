@@ -8,10 +8,12 @@ import express from "express";
 import handlebars from "express-handlebars";
 import helmet from "helmet";
 import { join } from "path";
-import { welcomePage, welcomeSubmit } from "../welcome.js";
+import { Connection } from "typeorm";
+import { welcomePage } from "./welcomePage.js";
+import { welcomeSubmit } from "./welcomeSubmit.js";
 
 // TODO: typeORM
-export default function initWeb(port: number, client: Client) {
+export default function initWeb(port: number, client: Client, db: Connection) {
     const app = express();
 
     // Middleware
@@ -23,7 +25,7 @@ export default function initWeb(port: number, client: Client) {
 
     // The welcome endpoint
     app.get("/w", welcomePage);
-    app.post("/w", welcomeSubmit(client));
+    app.post("/w", welcomeSubmit(client, db));
 
     // Main endpoint
     app.get("/", (_req, res) => res.send("beep beep"));

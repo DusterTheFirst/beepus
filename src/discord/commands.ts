@@ -4,8 +4,8 @@
 
 import { Message, RichEmbed } from "discord.js";
 import moment from "moment";
-import config from "./config/config.json";
-import generateForm from "./form.js";
+import config from "../config/config.json";
+import generateForm from "../web/generateForm.js";
 
 export async function parse(message: Message) {
     let guild = message.client.guilds.get(config.server);
