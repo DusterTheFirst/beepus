@@ -2,9 +2,10 @@
  * Copyright (C) 2019  Zachary Kohnen
  */
 
-import { Message } from "discord.js";
-import config from "./config.json";
-import { generateFormURL } from "./welcome.js";
+import { Message, RichEmbed } from "discord.js";
+import moment from "moment";
+import config from "./config/config.json";
+import generateForm from "./form.js";
 
 export async function parse(message: Message) {
     let guild = message.client.guilds.get(config.server);
@@ -20,7 +21,33 @@ export async function parse(message: Message) {
 
         if (!guild.member(message.author).roles.has(config.roles.hallpass)) {
             if (message.content === "!new") {
-                await message.author.send(generateFormURL(message.author));
+                let form = generateForm(message.author);
+                let me =  message.client.user;
+
+                await message.author.send(new RichEmbed({
+                    color: guild.me.displayColor,
+                    fields: [
+                        {
+                            inline: true,
+                            name: "Created At",
+                            value: moment(form.created).format("hh:mm a")
+                        },
+                        {
+                            inline: true,
+                            name: "Expires At",
+                            value: moment(form.expires).format("hh:mm a")
+                        }
+                    ],
+                    footer: {
+                        icon_url: me.displayAvatarURL,
+                        text: me.tag
+                    },
+                    thumbnail: {
+                        url: guild.iconURL
+                    },
+                    title: "Here yo go!",
+                    url: form.url
+                }));
             }
         } else {
             await message.author.send("You already have the hall pass!");

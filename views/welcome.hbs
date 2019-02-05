@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Welcome!</title>
+        <style>
+            html {
+	            font: 13px "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+            }
+            .form {
+                max-width: 400px;
+                padding: 20px 12px 10px 20px;
+            }
+            li {
+                padding: 0;
+                display: block;
+                list-style: none;
+                margin: 10px 0 0 0;
+            }
+            label {
+                margin: 0 0 3px 0;
+                padding: 0px;
+                display: block;
+                font-weight: bold;
+            }
+            input, textarea {
+                box-sizing: border-box;
+                border: 1px solid #BEBEBE;
+                padding: 7px;
+                margin: 0px;
+                transition: all 0.30s ease-in-out;
+                outline: none;	
+            }
+            input:focus, textarea:focus {
+                box-shadow: 0 0 8px #88D5E9;
+	            border: 1px solid #88D5E9;
+            }
+            .field-divided{
+                width: 49%;
+            }
+            .field-long{
+                width: 100%;
+            }
+            .field-textarea{
+                height: 100px;
+            }
+            input[type=submit] {
+                background: #4B99AD;
+                padding: 8px 15px 8px 15px;
+                border: none;
+                color: #fff;
+            }
+            input[type=submit]:hover {
+                background: #4691A4;
+                box-shadow: none;
+            }
+            .required{
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Hello there {{user.tag}}!</h1>
+        <p>The following form will be sent to an admin for review before you are granted access to the server</p>
+        <form method="POST" action="/w" autocomplete="on">
+            <ul class="form">
+                <li>
+                    <label>Full name <span class="required">*</span></label>
+                    <input type="text" name="firstname" placeholder="First" required="true" class="side" />
+                    <input type="text" name="lastname" placeholder="Last" required="true" class="side" />
+                </li>
+                <li>
+                    <label>Username <span class="required">*</span></label>
+                    <input type="text" name="username" disabled="true" value="{{user.tag}}" />
+                </li>
+                <li>
+                    <label>Who invited you <span class="required">*</span></label>
+                    <input type="text" name="inviter" placeholder="Inviter" required="true" />
+                </li>
+                <li>
+                    <label>Any more info</label>
+                    <textarea name="info" placeholder="Extra info"></textarea>
+                </li>
+                <li>
+                    <input type="submit" value="Send" />
+                </li>
+            </ul>
+            <input type="hidden" value="{{token}}" name="token" />
+        </form>
+    </body>
+</html>

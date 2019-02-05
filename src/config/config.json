@@ -1,0 +1,23 @@
+{
+    "server": "402229090624733184",
+    "roles": {
+        "autoAssign": [
+            "540916019380617237",
+            "540921348390649866"
+        ],
+        "hallpass": "540917166879539210"
+    },
+    "channels": {
+        "submissions": "542141942054649856"
+    },
+    "owners": {
+        "Zach Kohnen": "168827261682843648",
+        "Zoe Zhang": "382363770401587201"
+    },
+    "messages": {
+        "everyone": "**Shush!**\n\nIf you want to mention a specific group, please use their role.\nIf you really meant to mention everyone then continue on with your day, otherwise you should feel bad about annoying these nice people."
+    },
+    "expires": "10 min",
+    "host": "https://beepus.dusterthefirst.com",
+    "db": "users.sqlite"
+}
