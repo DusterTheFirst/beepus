@@ -9,10 +9,9 @@ import handlebars from "express-handlebars";
 import helmet from "helmet";
 import { join } from "path";
 import { Connection } from "typeorm";
-import welcomePage from "./welcomePage.js";
-import welcomeSubmit from "./welcomeSubmit.js";
+import welcomePage from "./welcomePage";
+import welcomeSubmit from "./welcomeSubmit";
 
-// TODO: typeORM
 export default function initWeb(port: number, client: Client, db: Connection) {
     const app = express();
 

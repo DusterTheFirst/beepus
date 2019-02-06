@@ -12,7 +12,7 @@ interface IWelcomeQuery {
 }
 
 /** The welcome page */
-export function welcomePage(req: Request, res: Response) {
+export default function welcomePage(req: Request, res: Response) {
     let query = req.query as IWelcomeQuery;
 
     // Verify the token

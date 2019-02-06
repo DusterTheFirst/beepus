@@ -25,7 +25,7 @@ interface IWelcomeForm {
     info: string;
 }
 
-export function welcomeSubmit(client: Client, db: Connection) {
+export default function welcomeSubmit(client: Client, db: Connection) {
     return (req: Request, res: Response) => {
         let body = req.body as IWelcomeForm;
         let guild = client.guilds.get(config.server);
@@ -50,6 +50,8 @@ export function welcomeSubmit(client: Client, db: Connection) {
                     let messages = await channel.send(new RichEmbed()
                         .setColor(guild.me.displayColor)
                         .setAuthor(member.user.tag, member.user.displayAvatarURL)
+                        .setFooter(member.id)
+                        .setTimestamp()
                         .addField("First Name", body.firstname, true)
                         .addField("Last Name", body.lastname, true)
                         .addField("Invited By", body.inviter)
@@ -66,6 +68,8 @@ export function welcomeSubmit(client: Client, db: Connection) {
                     // Save the submission
                     db.getRepository(Submission).save(submission);
                 }
+
+                // FIXME: ONE PER USER, better responses
 
                 res.send("Thank you!");
             } else {
