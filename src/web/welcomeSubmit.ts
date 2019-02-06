@@ -2,7 +2,7 @@
  * Copyright (C) 2019  Zachary Kohnen
  */
 
-import { Client, RichEmbed, TextChannel } from "discord.js";
+import { Client } from "discord.js";
 import { Request, Response } from "express";
 import jwt, { JsonWebTokenError, NotBeforeError, TokenExpiredError, VerifyErrors } from "jsonwebtoken";
 import { Connection } from "typeorm";
@@ -10,7 +10,9 @@ import config from "../config/config.json";
 import secrets from "../config/secrets.json";
 import Submission from "../database/Submission.js";
 import User from "../database/User.js";
+import { createSubmission } from "../discord/submission.js";
 import { IUserInfo } from "./generateForm.js";
+import userExists, { UserStatus } from "../database/userExists.js";
 
 interface IWelcomeForm {
     /** The token */
@@ -34,43 +36,22 @@ export default function welcomeSubmit(client: Client, db: Connection) {
             // Get the user data
             let userinfo = data as IUserInfo;
 
+            let userStatus = await userExists(db, userinfo.id);
+
+            if (userStatus === UserStatus.NotRegestered) {
+                
+            }
+
             if (err === null && guild !== undefined) {
-                let channel = guild.channels.get(config.channels.submissions);
+                // Create a user table object
+                let user = new User(userinfo.id, body.firstname, body.lastname, body.inviter, body.info);
+                // Create a submission object
+                let submission = await createSubmission(user, guild);
 
-                if (channel === undefined) {
-                    res.sendStatus(500);
+                // Save the submission
+                db.getRepository(Submission).save(submission);
 
-                    return;
-                }
-
-                if (channel.type === "text" && channel instanceof TextChannel) {
-                    let member = guild.member(userinfo.id);
-
-                    // Send the submission
-                    let messages = await channel.send(new RichEmbed()
-                        .setColor(guild.me.displayColor)
-                        .setAuthor(member.user.tag, member.user.displayAvatarURL)
-                        .setFooter(member.id)
-                        .setTimestamp()
-                        .addField("First Name", body.firstname, true)
-                        .addField("Last Name", body.lastname, true)
-                        .addField("Invited By", body.inviter)
-                        .addField("Extra Info", body.info));
-
-                    // Get the single message
-                    let message = Array.isArray(messages) ? messages[0] : messages;
-
-                    // Create a user table object
-                    let user = new User(member.id, body.firstname, body.lastname, body.inviter, body.info);
-                    // Create a submission object
-                    let submission = new Submission(user, message.id);
-
-                    // Save the submission
-                    db.getRepository(Submission).save(submission);
-                }
-
-                // FIXME: ONE PER USER, better responses
-
+                // TODO: FIXED MESSAGES
                 res.send("Thank you!");
             } else {
                 if (err instanceof TokenExpiredError) {

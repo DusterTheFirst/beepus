@@ -24,6 +24,8 @@ export async function parse(message: Message) {
                 let form = generateForm(message.author);
                 let me =  message.client.user;
 
+                if ()
+
                 await message.author.send(new RichEmbed({
                     color: guild.me.displayColor,
                     fields: [

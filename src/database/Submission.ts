@@ -17,9 +17,13 @@ export default class Submission {
     @PrimaryColumn()
     public id: string;
 
-    constructor(user: User, message: string) {
-        this.user = user;
-        this.message = message;
-        this.id = user.id;
+    constructor(user?: User, message?: string) {
+        if (user !== undefined) {
+            this.user = user;
+            this.id = user.id;
+        }
+        if (message !== undefined) {
+            this.message = message;
+        }
     }
 }
