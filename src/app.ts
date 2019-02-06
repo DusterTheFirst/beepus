@@ -9,10 +9,6 @@ import Submission from "./database/Submission.js";
 import initDiscord from "./discord/init.js";
 import initWeb from "./web/init.js";
 
-// if (!existsSync(join(__dirname, config.db))) {
-//     writeFileSync(join(__dirname, config.db), "");
-// }
-
 (async () => {
     let database =  await initDB();
     let client = initDiscord(database);
