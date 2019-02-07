@@ -7,7 +7,7 @@ import RealUser from "./RealUser";
 import Submission from "./Submission";
 
 /** Move the submission to the users database */
-export default function acceptSubmission(db: Connection, submission: Submission) {
-    db.getRepository(Submission).remove(submission);
-    db.getRepository(RealUser).save(submission.user);
+export default async function acceptSubmission(db: Connection, submission: Submission) {
+    await db.getRepository(Submission).remove(submission);
+    await db.getRepository(RealUser).save(submission.user);
 }

@@ -1,0 +1,64 @@
+html {
+    font: 13px "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
+.form {
+    max-width: 400px;
+    padding: 20px 12px 10px 20px;
+
+    li {
+        padding: 0;
+        display: block;
+        list-style: none;
+        margin: 10px 0 0 0;
+
+        label {
+            margin: 0 0 3px 0;
+            padding: 0px;
+            display: block;
+            font-weight: bold;
+
+            .required {
+                color: red;
+            }
+        }
+
+        input, textarea {
+            box-sizing: border-box;
+            border: 1px solid #BEBEBE;
+            padding: 7px;
+            margin: 0px;
+            transition: border 0.30s ease-in-out, box-shadow 0.30s ease-in-out;
+            outline: none;
+
+            &:focus {
+                box-shadow: 0 0 8px #88D5E9;
+                border: 1px solid #88D5E9;
+            }
+
+            &.field-divided {
+                width: 49%;
+            }
+            
+            &.field-long {
+                width: 100%;
+            }
+            
+            &.field-textarea {
+                height: 100px;
+            }
+
+            &[type=submit] {
+                background: #4B99AD;
+                padding: 8px 15px 8px 15px;
+                border: none;
+                color: #fff;
+
+                &:hover {
+                    background: #4691A4;
+                    box-shadow: none;
+                }
+            }
+        }
+    }
+}

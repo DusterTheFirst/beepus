@@ -9,20 +9,28 @@
     <body>
         {{#if user}}
             <h1>Hello {{user.username}}!</h1>
-            <p>You joined the server on {{member.joinedAt}}</p>
-            {{#if realuser}}
-                {{#if isSubmission}}
-                    <h3>Your submission is being reviewed</h3>
-                {{else}}
+            {{#if member}}
+                <p>You joined the server on {{member.joinedAt}}</p>
+                <h2>Roles</h2>
+                <ul>
+                    {{#each roles}}
+                        <li>{{name}}</li>
+                    {{/each}}
+                </ul>
+                {{#if realuserStatus.registered}}
                     <h3>Well hello there {{realuser.firstname}} {{realuser.lastname}}</h3>
+                {{else if realuserStatus.pending}}
+                        <h3>Your submission is being reviewed <a href="/welcome">View Details</a></h3>
+                {{else}}
+                    <h2>You have not filled out the <a href="/welcome">Welcome form</a>!</h2>
                 {{/if}}
             {{else}}
-                <h2>You have not filled out the <a href="/welcome">Welcome form</a>!</h2>
+                <p>You are not a member of the server!</p>
             {{/if}}
 
-            <a href="/auth/logout">Logout here</a>
+            <a href="/auth/logout">Log out here</a>
         {{else}}
-            <a href="/auth/login">Please login</a>
+            <a href="/auth/login">Please log in</a>
         {{/if}}
     </body>
 </html>

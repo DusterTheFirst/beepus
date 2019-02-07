@@ -10,8 +10,10 @@ import initDiscord from "./discord/init.js";
 import initWeb from "./web/init.js";
 
 (async () => {
-    let database =  await initDB();
-    let client = initDiscord(database);
+    let database = await initDB();
+    let client = await initDiscord(database);
+
+    // Init modules that require client
     client.on("ready", () => {
         // Get the guild
         let guild = client.guilds.find(x => x.id === config.server);
@@ -19,6 +21,6 @@ import initWeb from "./web/init.js";
         // Initialize the website
         initWeb(4747, guild, database);
     });
-
-    console.log("Everything is up and running!");
-})();
+})()
+    .then(() => console.log("Everything is up and running!"))
+    .catch((error) => console.error(error));

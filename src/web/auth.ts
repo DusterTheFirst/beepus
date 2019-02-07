@@ -13,6 +13,7 @@ import config from "../config/config.json";
 import secrets from "../config/secrets.json";
 import RealUser from "../database/RealUser.js";
 import Submission from "../database/Submission.js";
+import userStatus, { UserStatus } from "../database/userStatus.js";
 
 const discordAuth = new OAuth({
     accessTokenUri: "https://discordapp.com/api/oauth2/token",
@@ -31,13 +32,15 @@ export default function auth(guild: Guild, db: Connection) {
     let router = Router();
 
     // Redirect to auth page
-    router.get("/auth/login", (req, res) =>
+    router.get("/auth/login", (req, res) => {
+        let ref = req.header("Referrer");
+
         res.redirect(
             discordAuth.code.getUri({
-                state: encodeURIComponent(req.header("Referrer") || config.web.host)
+                state: encodeURIComponent(ref !== undefined ? ref : "/")
             })
-        )
-    );
+        );
+    });
 
     // Consume the token
     router.get("/auth/redirect", async (req, res) => {
@@ -95,12 +98,15 @@ export default function auth(guild: Guild, db: Connection) {
 
                 // Get the RealUser from the discord user
                 if (user !== undefined) {
+                    // Get the userStatus
+                    req.realuserStatus = await userStatus(db, user.id);
+
                     // Get the RealUser
-                    req.realuser = await db.getRepository(RealUser).findOne({ where: user.id });
+                    req.realuser = await db.getRepository(RealUser).findOne(user.id);
 
                     // If there is no RealUser, get the Submission
                     if (req.realuser === undefined) {
-                        req.realuser = await db.getRepository(Submission).findOne({ where: user.id });
+                        req.realuser = await db.getRepository(Submission).findOne(user.id);
                     }
                 }
             } catch (e) {
@@ -116,7 +122,7 @@ export default function auth(guild: Guild, db: Connection) {
 
     // Revoke and remove token
     router.get("/auth/logout", async (req, res) => {
-        if (req.token) {
+        if (req.token !== undefined) {
             // Revoke the token
             await fetch(`https://discordapp.com/api/oauth2/token/revoke?token=${req.token.accessToken}`);
         }
@@ -125,7 +131,8 @@ export default function auth(guild: Guild, db: Connection) {
         res.cookie("token", "", { expires: new Date(0) });
 
         // Go back
-        res.redirect(req.header("Referrer") || "/");
+        let ref = req.header("Referrer");
+        res.redirect(ref !== undefined ? ref : "/");
     });
 
     return router;
@@ -144,7 +151,7 @@ async function getUser(token: Token, secondattempt = false): Promise<IDiscordUse
     if (response.status === 401) {
         // Do not loop more than twice
         if (secondattempt) {
-            return;
+            return undefined;
         }
         // Refresh the token
         await token.refresh();
@@ -194,6 +201,8 @@ declare global {
             token?: Token;
             /** The RealUser or submission tied to the user */
             realuser?: RealUser | Submission;
+            /** The status of the discord user */
+            realuserStatus?: UserStatus;
         }
     }
 }
