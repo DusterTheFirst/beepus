@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Beepus</title>
+    </head>
+    <body>
+        {{#if user}}
+            <h1>Hello {{user.username}}!</h1>
+            <p>You joined the server on {{member.joinedAt}}</p>
+            {{#if realuser}}
+                {{#if isSubmission}}
+                    <h3>Your submission is being reviewed</h3>
+                {{else}}
+                    <h3>Well hello there {{realuser.firstname}} {{realuser.lastname}}</h3>
+                {{/if}}
+            {{else}}
+                <h2>You have not filled out the <a href="/welcome">Welcome form</a>!</h2>
+            {{/if}}
+
+            <a href="/auth/logout">Logout here</a>
+        {{else}}
+            <a href="/auth/login">Please login</a>
+        {{/if}}
+    </body>
+</html>

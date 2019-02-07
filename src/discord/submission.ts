@@ -4,11 +4,11 @@
 
 import { Guild, RichEmbed, TextChannel } from "discord.js";
 import config from "../config/config.json";
+import RealUser from "../database/RealUser";
 import Submission from "../database/Submission";
-import User from "../database/User";
 
 /** Send a submission to the discord */
-export async function createSubmission(user: User, guild: Guild): Promise<Submission> {
+export async function createSubmission(user: RealUser, guild: Guild): Promise<Submission> {
     let member = guild.member(user.id);
 
     let channel = guild.channels.find(x => x.id === config.channels.submissions) as TextChannel;
@@ -32,5 +32,5 @@ export async function createSubmission(user: User, guild: Guild): Promise<Submis
 
 /** Send a submission to the discord */
 export async function removeSubmission(submission: Submission, guild: Guild) {
-    
+    // TODO:
 }

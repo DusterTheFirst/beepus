@@ -3,13 +3,13 @@
  */
 
 import { Column, Entity, PrimaryColumn } from "typeorm";
-import User from "./User";
+import RealUser from "./RealUser";
 
 @Entity()
 export default class Submission {
     /** The user tied to the submission */
-    @Column(() => User)
-    public user: User;
+    @Column(() => RealUser)
+    public user: RealUser;
     /** The message sent */
     @Column()
     public message: string;
@@ -17,7 +17,7 @@ export default class Submission {
     @PrimaryColumn()
     public id: string;
 
-    constructor(user?: User, message?: string) {
+    constructor(user?: RealUser, message?: string) {
         if (user !== undefined) {
             this.user = user;
             this.id = user.id;

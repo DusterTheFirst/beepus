@@ -17,7 +17,7 @@
     "messages": {
         "everyone": "**Shush!**\n\nIf you want to mention a specific group, please use their role.\nIf you really meant to mention everyone then continue on with your day, otherwise you should feel bad about annoying these nice people."
     },
-    "expires": "10 min",
-    "host": "https://beepus.dusterthefirst.com",
-    "db": "users.sqlite"
+    "web": {
+        "host": "https://beepus.dusterthefirst.com"
+    }
 }

@@ -3,11 +3,11 @@
  */
 
 import { Connection } from "typeorm";
+import RealUser from "./RealUser";
 import Submission from "./Submission";
-import User from "./User";
 
 /** Move the submission to the users database */
 export default function acceptSubmission(db: Connection, submission: Submission) {
     db.getRepository(Submission).remove(submission);
-    db.getRepository(User).save(submission.user);
+    db.getRepository(RealUser).save(submission.user);
 }

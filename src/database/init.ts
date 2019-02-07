@@ -4,14 +4,14 @@
 
 import { join } from "path";
 import { createConnection } from "typeorm";
+import RealUser from "./RealUser";
 import Submission from "./Submission";
-import User from "./User";
 
 export default async function initDB() {
     return createConnection({
         database: join(__dirname, "db.sqlite"),
         entities: [
-            User,
+            RealUser,
             Submission
         ],
         synchronize: true,

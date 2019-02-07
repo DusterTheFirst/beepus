@@ -5,7 +5,7 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity()
-export default class User {
+export default class RealUser {
     /** The discord ID of the user */
     @PrimaryColumn()
     public id: string;

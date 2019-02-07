@@ -6,8 +6,8 @@ import { Client } from "discord.js";
 import { Connection } from "typeorm";
 import config from "../config/config.json";
 import secrets from "../config/secrets.json";
-import { parse } from "./commands.js";
-import { welcomeFlow } from "./welcome.js";
+// import { parse } from "./commands.js";
+// import { welcomeFlow } from "./welcome.js";
 
 export default function initDiscord(db: Connection) {
     const client = new Client();
@@ -28,13 +28,13 @@ export default function initDiscord(db: Connection) {
     // TODO: VOICE MEME FORTNIGHT
     // TODO: ADMITTANCE TICKETS
     // TODO: whois command/whoami/changewhoiam commands for identities
-    client.on("message", parse);
+    // client.on("message", parse(db));
 
-    client.on("guildMemberAdd", welcomeFlow);
+    // client.on("guildMemberAdd", welcomeFlow);
 
     client.on("error", (err) => console.error(err));
 
-    client.login(secrets.token).catch((e) => console.error(e));
+    client.login(secrets.client.token).catch((e) => console.error(e));
 
     return client;
 }
