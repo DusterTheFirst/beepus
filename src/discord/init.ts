@@ -146,7 +146,7 @@ export default async function initDiscord(db: Connection) {
                             .setColor("#43b581")
                             .addField("First Name", realuser.firstname, true)
                             .addField("First Name", realuser.lastname, true)
-                            .addField("Extra Info", realuser.info === undefined ? "none" : realuser.info ));
+                            .addField("Extra Info", realuser.info === "" ? "none" : realuser.info ));
                     } else if (status === UserStatus.Pending) {
                         let submission = await db.getRepository(Submission).findOneOrFail(member.id);
                         await message.channel.send(new RichEmbed()
@@ -155,7 +155,7 @@ export default async function initDiscord(db: Connection) {
                             .setColor("#faa61a")
                             .addField("First Name", submission.user.firstname, true)
                             .addField("First Name", submission.user.lastname, true)
-                            .addField("Extra Info", submission.user.info === undefined ? "none" : submission.user.info ));
+                            .addField("Extra Info", submission.user.info === "" ? "none" : submission.user.info ));
                     } else {
                         await message.channel.send(new RichEmbed()
                             .setTitle(`User \`${member.user.tag}\` has not been registered`)

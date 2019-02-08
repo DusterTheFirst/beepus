@@ -20,9 +20,9 @@ export default class RealUser {
     public inviter: string;
     /** Extra info about the user */
     @Column()
-    public info?: string;
+    public info: string;
 
-    constructor(id: string, firstname: string, lastname: string, inviter: string, info?: string) {
+    constructor(id: string, firstname: string, lastname: string, inviter: string, info: string) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
