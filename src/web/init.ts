@@ -93,7 +93,6 @@ export default function initWeb(port: number, guild: Guild, db: Connection) {
             pending: req.realuserStatus === UserStatus.Pending,
             registered: req.realuserStatus === UserStatus.Registered
         },
-        roles: req.member !== undefined ? req.member.roles.array() : undefined,
         token: req.token,
         user: req.user
     }));

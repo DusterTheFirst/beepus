@@ -11,12 +11,6 @@
             <h1>Hello {{user.username}}!</h1>
             {{#if member}}
                 <p>You joined the server on {{member.joinedAt}}</p>
-                <h2>Roles</h2>
-                <ul>
-                    {{#each roles}}
-                        <li>{{name}}</li>
-                    {{/each}}
-                </ul>
                 {{#if realuserStatus.registered}}
                     <h3>Well hello there {{realuser.firstname}} {{realuser.lastname}}</h3>
                 {{else if realuserStatus.pending}}

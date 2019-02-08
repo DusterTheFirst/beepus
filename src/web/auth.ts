@@ -69,7 +69,7 @@ export default function auth(guild: Guild, db: Connection) {
     });
 
     // Middlware
-    router.use(async (req, _res, next) => {
+    router.use(async (req, res, next) => {
         // Get the token from the cookies
         let { token: cookie } = req.cookies as IAuthCookies;
 
@@ -110,8 +110,10 @@ export default function auth(guild: Guild, db: Connection) {
                     }
                 }
             } catch (e) {
+                // Clear the cookie
+                res.cookie("token", "", { expires: new Date(0) });
+
                 console.error(e);
-                next(e);
 
                 return;
             }

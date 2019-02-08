@@ -2,7 +2,7 @@
  * Copyright (C) 2019  Zachary Kohnen
  */
 
-import { Client, TextChannel } from "discord.js";
+import { Client, Message, RichEmbed, TextChannel } from "discord.js";
 import { Connection } from "typeorm";
 import config from "../config/config.json";
 import secrets from "../config/secrets.json";
@@ -49,11 +49,109 @@ export default async function initDiscord(db: Connection) {
     });
 
     // TODO: VOICE MEME FORTNIGHT
-    // TODO: ADMITTANCE TICKETS
     // TODO: whois command/whoami/changewhoiam commands for identities
-    // client.on("message", parse(db));
+    client.on("message", async (message) => {
+        // Ignore self messages or from other bots
+        if (message.author.bot) return;
 
-    // client.on("guildMemberAdd", welcomeFlow);
+        if (message.mentions.everyone) {
+            // Tell dummies to shut it
+            await message.member.send(config.messages.everyone);
+        } else if (message.content.startsWith(message.guild.me.user.toString())) {
+            // Commands
+            let content = message.content.replace(message.guild.me.user.toString(), "").trim();
+
+            // Command for game roles
+            if (content.toLowerCase().startsWith("i play")) {
+                // Get the game
+                let game = content.replace(/i play/i, "").trim().toLowerCase();
+
+                // Give them a the role if it exists
+                if (config.roles.games.includes(game)) {
+                    if (message.member.roles.map(x => x.name).includes(game)) {
+                        let msg = await message.channel.send(`You already have the role \`${game}\`!`) as Message;
+                        // Delete after ten seconds
+                        client.setTimeout(() => msg.delete(), 10000);
+                    } else {
+                        // Give them the role
+                        await message.member.addRole(message.guild.roles.find(x => x.name === game));
+                        // Send the message
+                        let msg = await message.reply("There you go!") as Message;
+                        // Delete after ten seconds
+                        client.setTimeout(() => msg.delete(), 10000);
+                    }
+                } else {
+                    await message.channel.send(`Sorry there is no role for the game \`${game}\`. If you feel this game should be added please DM one of your overlords`);
+                }
+            } else if (content.toLowerCase().startsWith("i do not play")) {
+                // Get the game
+                let game = content.replace(/i do not play/i, "").trim().toLowerCase();
+
+                // Give them a the role if it exists
+                if (config.roles.games.includes(game)) {
+                    if (message.member.roles.map(x => x.name).includes(game)) {
+                        // Give them the role
+                        await message.member.removeRole(message.guild.roles.find(x => x.name === game));
+                        // Send the message
+                        let msg = await message.reply("Bye!") as Message;
+                        // Delete after ten seconds
+                        client.setTimeout(() => msg.delete(), 10000);
+                    } else {
+                        let msg = await message.channel.send(`You do not have the role \`${game}\`!`) as Message;
+                        // Delete after ten seconds
+                        client.setTimeout(() => msg.delete(), 10000);
+                    }
+                } else {
+                    await message.channel.send(`Sorry there is no role for the game \`${game}\`. If you feel this game should be added please DM one of your overlords.`);
+                }
+            } else if (content.match(/what games (are there|can i play|do you have)/i)) {
+                await message.channel.send(`Thanks for asking, I have all of the following games.\n\`\`\`md\n${config.roles.games.map(x => `# ${x}`).join("\n")}\n\`\`\``);
+            } else if (content.toLowerCase().includes("help")) {
+                let commands = [
+                    {
+                        description: "Get a game role",
+                        name: "i play",
+                        params: "<game>"
+                    },
+                    {
+                        description: "Remove a game role",
+                        name: "i do not play",
+                        params: "<game>"
+                    },
+                    {
+                        description: "Get a list of games",
+                        name: "what games are there"
+                    },
+                    {
+                        description: "Get this help",
+                        name: "help"
+                    }
+                ];
+
+                await message.channel.send(
+                    new RichEmbed()
+                        .setTitle("Commands")
+                        .setDescription(commands.map(x => `${message.guild.me.toString()} **${x.name}** ${x.params === undefined ? `- ${x.description}` : `${x.params} - ${x.description}`}`).join("\n"))
+                        .setColor(message.guild.me.displayColor)
+                );
+            }
+        } else if (message.mentions.users.has(message.guild.me.user.id)) {
+            // Just say hi
+            await message.reply("Hi there!");
+        }
+    });
+
+    client.on("guildMemberAdd", (member) =>
+        member.send(
+            new RichEmbed()
+                .setTitle("Welcome!")
+                .setDescription(`Hello there! I am your friendly neighborhood beepus! Please fill out [**this form**](${config.web.host}) to obtain your hall pass.`)
+                .setTimestamp()
+                .setFooter(member.guild.me.user.tag, member.guild.me.user.displayAvatarURL)
+                .setColor(member.guild.me.displayColor)
+                .setThumbnail(member.guild.iconURL)
+        )
+    );
 
     client.on("error", (err) => console.error(err));
 

@@ -29,8 +29,3 @@ export async function createSubmission(user: RealUser, guild: Guild): Promise<Su
 
     return new Submission(user, message.id);
 }
-
-/** Send a submission to the discord */
-export async function removeSubmission(submission: Submission, guild: Guild) {
-    // TODO:
-}
