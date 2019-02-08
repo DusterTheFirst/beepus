@@ -119,6 +119,9 @@ export default async function initDiscord(db: Connection) {
 
                     if (success) {
                         await member.addRole(config.roles.hallpass);
+                        for (let role of config.roles.autoAssign) {
+                            await member.addRole(role);
+                        }
                         await message.channel.send(`User ${member.user.tag} has been accepted`);
                     } else {
                         await message.channel.send(`User ${member.user.tag} does not have a submission`);
