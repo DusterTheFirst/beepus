@@ -14,7 +14,7 @@ import initWeb from "./web/init.js";
     let client = await initDiscord(database);
 
     // Init modules that require client
-    client.on("ready", () => {
+    client.once("ready", () => {
         // Get the guild
         let guild = client.guilds.find(x => x.id === config.server);
 

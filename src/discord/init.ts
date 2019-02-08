@@ -6,9 +6,11 @@ import { Client, Message, RichEmbed, TextChannel } from "discord.js";
 import { Connection } from "typeorm";
 import config from "../config/config.json";
 import secrets from "../config/secrets.json";
+import acceptSubmission from "../database/acceptSubmission.js";
+import RealUser from "../database/RealUser.js";
 import Submission from "../database/Submission.js";
-// import { parse } from "./commands.js";
-// import { welcomeFlow } from "./welcome.js";
+import userStatus, { UserStatus } from "../database/userStatus.js";
+import { getGuildMember } from "./util.js";
 
 export default async function initDiscord(db: Connection) {
     const client = new Client();
@@ -49,7 +51,6 @@ export default async function initDiscord(db: Connection) {
     });
 
     // TODO: VOICE MEME FORTNIGHT
-    // TODO: whois command/whoami/changewhoiam commands for identities
     client.on("message", async (message) => {
         // Ignore self messages or from other bots
         if (message.author.bot) return;
@@ -106,8 +107,69 @@ export default async function initDiscord(db: Connection) {
                 }
             } else if (content.match(/what games (are there|can i play|do you have)/i)) {
                 await message.channel.send(`Thanks for asking, I have all of the following games.\n\`\`\`md\n${config.roles.games.map(x => `# ${x}`).join("\n")}\n\`\`\``);
+            } else if (content.toLowerCase().startsWith("accept")) {
+                if (!message.member.hasPermission("KICK_MEMBERS")) return;
+
+                let user = content.replace(/accept/i, "").trim();
+
+                let member = getGuildMember(user, message.guild);
+
+                if (member) {
+                    let success = await acceptSubmission(db, member.id, message.guild);
+
+                    if (success) {
+                        await member.addRole(config.roles.hallpass);
+                        await message.channel.send(`User ${member.user.tag} has been accepted`);
+                    } else {
+                        await message.channel.send(`User ${member.user.tag} does not have a submission`);
+                    }
+                } else {
+                    message.channel.send(`User \`${user}\` was not found`);
+                }
+
+            } else if (content.toLowerCase().startsWith("who is")) {
+                let user = content.replace(/who is/i, "").trim();
+
+                let member = getGuildMember(user, message.guild);
+
+                if (member) {
+                    let status = await userStatus(db, member.id);
+                    if (status === UserStatus.Registered) {
+                        let realuser = await db.getRepository(RealUser).findOneOrFail(member.id);
+
+                        await message.channel.send(new RichEmbed()
+                            .setTitle(`User \`${member.user.tag}\` is registered.`)
+                            .setTimestamp()
+                            .setColor("#43b581")
+                            .addField("First Name", realuser.firstname, true)
+                            .addField("First Name", realuser.lastname, true)
+                            .addField("Extra Info", realuser.info === undefined ? "none" : realuser.info ));
+                    } else if (status === UserStatus.Pending) {
+                        let submission = await db.getRepository(Submission).findOneOrFail(member.id);
+                        await message.channel.send(new RichEmbed()
+                            .setTitle(`User \`${member.user.tag}\` is pending registration.`)
+                            .setTimestamp()
+                            .setColor("#faa61a")
+                            .addField("First Name", submission.user.firstname, true)
+                            .addField("First Name", submission.user.lastname, true)
+                            .addField("Extra Info", submission.user.info === undefined ? "none" : submission.user.info ));
+                    } else {
+                        await message.channel.send(new RichEmbed()
+                            .setTitle(`User \`${member.user.tag}\` has not been registered`)
+                            .setTimestamp()
+                            .setColor("#f04747"));
+                    }
+                } else {
+                    message.channel.send(`User \`${user}\` was not found`);
+                }
+
             } else if (content.toLowerCase().includes("help")) {
                 let commands = [
+                    {
+                        description: "Learn about someone",
+                        name: "who is",
+                        params: "<user>"
+                    },
                     {
                         description: "Get a game role",
                         name: "i play",
@@ -121,6 +183,11 @@ export default async function initDiscord(db: Connection) {
                     {
                         description: "Get a list of games",
                         name: "what games are there"
+                    },
+                    {
+                        description: "Accept a submission (Mod+)",
+                        name: "accept",
+                        params: "<user>"
                     },
                     {
                         description: "Get this help",

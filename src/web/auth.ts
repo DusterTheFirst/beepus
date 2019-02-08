@@ -112,10 +112,6 @@ export default function auth(guild: Guild, db: Connection) {
             } catch (e) {
                 // Clear the cookie
                 res.cookie("token", "", { expires: new Date(0) });
-
-                console.error(e);
-
-                return;
             }
         }
 

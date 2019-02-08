@@ -22,7 +22,7 @@ export async function createSubmission(user: RealUser, guild: Guild): Promise<Su
         .addField("First Name", user.firstname, true)
         .addField("Last Name", user.lastname, true)
         .addField("Invited By", user.inviter)
-        .addField("Extra Info", user.info));
+        .addField("Extra Info", user.info === "" ? "none" : user.info));
 
     // Get the single message
     let message = Array.isArray(messages) ? messages[0] : messages;
