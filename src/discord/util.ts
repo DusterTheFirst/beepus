@@ -2,10 +2,10 @@
  * Copyright (C) 2019  Zachary Kohnen
  */
 
-import { Guild } from "discord.js";
+import { Guild, GuildMember } from "discord.js";
 
 /** Get a guild member from the given guild */
-export function getGuildMember(x: string, guild: Guild) {
+export function getGuildMember(x: string, guild: Guild): GuildMember | undefined {
     let mems = guild.members;
 
     return mems.find(m =>

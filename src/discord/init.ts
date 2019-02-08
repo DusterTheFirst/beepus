@@ -72,14 +72,14 @@ export default async function initDiscord(db: Connection) {
                     if (message.member.roles.map(x => x.name).includes(game)) {
                         let msg = await message.channel.send(`You already have the role \`${game}\`!`) as Message;
                         // Delete after ten seconds
-                        client.setTimeout(() => msg.delete(), 10000);
+                        client.setTimeout(async () => msg.delete(), 10000);
                     } else {
                         // Give them the role
                         await message.member.addRole(message.guild.roles.find(x => x.name === game));
                         // Send the message
                         let msg = await message.reply("There you go!") as Message;
                         // Delete after ten seconds
-                        client.setTimeout(() => msg.delete(), 10000);
+                        client.setTimeout(async () => msg.delete(), 10000);
                     }
                 } else {
                     await message.channel.send(`Sorry there is no role for the game \`${game}\`. If you feel this game should be added please DM one of your overlords`);
@@ -96,16 +96,16 @@ export default async function initDiscord(db: Connection) {
                         // Send the message
                         let msg = await message.reply("Bye!") as Message;
                         // Delete after ten seconds
-                        client.setTimeout(() => msg.delete(), 10000);
+                        client.setTimeout(async () => msg.delete(), 10000);
                     } else {
                         let msg = await message.channel.send(`You do not have the role \`${game}\`!`) as Message;
                         // Delete after ten seconds
-                        client.setTimeout(() => msg.delete(), 10000);
+                        client.setTimeout(async () => msg.delete(), 10000);
                     }
                 } else {
                     await message.channel.send(`Sorry there is no role for the game \`${game}\`. If you feel this game should be added please DM one of your overlords.`);
                 }
-            } else if (content.match(/what games (are there|can i play|do you have)/i)) {
+            } else if (content.match(/what games (are there|can i play|do you have)/i) !== null) {
                 await message.channel.send(`Thanks for asking, I have all of the following games.\n\`\`\`md\n${config.roles.games.map(x => `# ${x}`).join("\n")}\n\`\`\``);
             } else if (content.toLowerCase().startsWith("accept")) {
                 if (!message.member.hasPermission("KICK_MEMBERS")) return;
@@ -114,7 +114,7 @@ export default async function initDiscord(db: Connection) {
 
                 let member = getGuildMember(user, message.guild);
 
-                if (member) {
+                if (member !== undefined) {
                     let success = await acceptSubmission(db, member.id, message.guild);
 
                     if (success) {
@@ -124,7 +124,7 @@ export default async function initDiscord(db: Connection) {
                         await message.channel.send(`User ${member.user.tag} does not have a submission`);
                     }
                 } else {
-                    message.channel.send(`User \`${user}\` was not found`);
+                    await message.channel.send(`User \`${user}\` was not found`);
                 }
 
             } else if (content.toLowerCase().startsWith("who is")) {
@@ -132,7 +132,7 @@ export default async function initDiscord(db: Connection) {
 
                 let member = getGuildMember(user, message.guild);
 
-                if (member) {
+                if (member !== undefined) {
                     let status = await userStatus(db, member.id);
                     if (status === UserStatus.Registered) {
                         let realuser = await db.getRepository(RealUser).findOneOrFail(member.id);
@@ -160,7 +160,7 @@ export default async function initDiscord(db: Connection) {
                             .setColor("#f04747"));
                     }
                 } else {
-                    message.channel.send(`User \`${user}\` was not found`);
+                    await message.channel.send(`User \`${user}\` was not found`);
                 }
 
             } else if (content.toLowerCase().includes("help")) {
@@ -208,11 +208,11 @@ export default async function initDiscord(db: Connection) {
         }
     });
 
-    client.on("guildMemberAdd", (member) =>
+    client.on("guildMemberAdd", async (member) =>
         member.send(
             new RichEmbed()
                 .setTitle("Welcome!")
-                .setDescription(`Hello there! I am your friendly neighborhood beepus! Please fill out [**this form**](${config.web.host}) to obtain your hall pass.`)
+                .setDescription(`Hello there! I am your friendly neighborhood beepus! Please fill out [**this form**](${config.web.host}/welcome) to obtain your hall pass.`)
                 .setTimestamp()
                 .setFooter(member.guild.me.user.tag, member.guild.me.user.displayAvatarURL)
                 .setColor(member.guild.me.displayColor)
