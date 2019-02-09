@@ -44,28 +44,32 @@ export default function auth(guild: Guild, db: Connection) {
 
     // Consume the token
     router.get("/auth/redirect", async (req, res) => {
-        // Get the token from the URL
-        let token = await discordAuth.code.getToken(req.originalUrl);
-        // Get the referrer
-        let state = decodeURIComponent((req.query as { state: string }).state);
+        try {
+            // Get the token from the URL
+            let token = await discordAuth.code.getToken(req.originalUrl);
+            // Get the referrer
+            let state = decodeURIComponent((req.query as { state: string }).state);
 
-        // Create a cookie with the details
-        let cookie = jwt.sign({
-            accessToken: token.accessToken,
-            data: token.data,
-            refreshToken: token.refreshToken,
-            tokenType: token.tokenType
-        } as IJWTDiscordAuth, secrets.keys.jwt, {
-                audience: "self",
-                expiresIn: "1 year",
-                issuer: "beepus",
-                subject: "Discord Auth"
-            });
+            // Create a cookie with the details
+            let cookie = jwt.sign({
+                accessToken: token.accessToken,
+                data: token.data,
+                refreshToken: token.refreshToken,
+                tokenType: token.tokenType
+            } as IJWTDiscordAuth, secrets.keys.jwt, {
+                    audience: "self",
+                    expiresIn: "1 year",
+                    issuer: "beepus",
+                    subject: "Discord Auth"
+                });
 
-        // Save the cookie for 10 years
-        res.cookie("token", cookie, {
-            expires: moment().add(10, "years").toDate()
-        }).redirect(state); // Redirect to the page that caused the login
+            // Save the cookie for 10 years
+            res.cookie("token", cookie, {
+                expires: moment().add(10, "years").toDate()
+            }).redirect(state); // Redirect to the page that caused the login
+        } catch {
+            res.redirect("/");
+        }
     });
 
     // Middlware

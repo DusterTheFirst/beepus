@@ -6,7 +6,7 @@ import bodyparser from "body-parser";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import { Guild } from "discord.js";
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import handlebars from "express-handlebars";
 import helmet from "helmet";
 import fetch from "node-fetch";
@@ -59,6 +59,8 @@ export default function initWeb(port: number, guild: Guild, db: Connection) {
     app.engine("hbs", handlebars({ extname: "hbs", layoutsDir: join(__dirname, "..", "..", "views") }));
     app.set("view engine", "hbs");
 
+    console.log(`Using handlebars in the '${join(__dirname, "..", "..", "views", "styles")}' directory`);
+
     // The welcome endpoint
     app.get("/welcome", (req, res) => {
         res.render("welcome", {
@@ -96,6 +98,21 @@ export default function initWeb(port: number, guild: Guild, db: Connection) {
         token: req.token,
         user: req.user
     }));
+
+    app.use("*", (req, res) => res.render("error", {
+        error: "404",
+        message: "Page not found",
+        user: req.user
+    }));
+
+    app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
+        res.render("error", {
+            error: "500",
+            message: "Internal error",
+            user: req.user
+        });
+        console.log(err);
+    });
 
     app.listen(port);
 }

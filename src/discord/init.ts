@@ -58,6 +58,8 @@ export default async function initDiscord(db: Connection) {
         if (message.mentions.everyone) {
             // Tell dummies to shut it
             await message.member.send(config.messages.everyone);
+        } else if (message.channel.type === "dm") {
+            console.log(message.author, message.content);
         } else if (message.content.startsWith(message.guild.me.user.toString())) {
             // Commands
             let content = message.content.replace(message.guild.me.user.toString(), "").trim();
@@ -114,17 +116,24 @@ export default async function initDiscord(db: Connection) {
 
                 let member = getGuildMember(user, message.guild);
 
-                if (member !== undefined) {
-                    let success = await acceptSubmission(db, member.id, message.guild);
-
-                    if (success) {
-                        await member.addRole(config.roles.hallpass);
-                        for (let role of config.roles.autoAssign) {
-                            await member.addRole(role);
-                        }
-                        await message.channel.send(`User ${member.user.tag} has been accepted`);
-                    } else {
+                if (member !== null) {
+                    let status = await userStatus(db, member.id);
+                    if (status === UserStatus.NotRegistered) {
                         await message.channel.send(`User ${member.user.tag} does not have a submission`);
+                    } else if (status === UserStatus.Pending) {
+                        let success = await acceptSubmission(db, member.id, message.guild);
+
+                        if (success) {
+                            await member.addRole(config.roles.hallpass);
+                            for (let role of config.roles.autoAssign) {
+                                await member.addRole(role);
+                            }
+                            await message.channel.send(`User ${member.user.tag} has been accepted`);
+                        } else {
+                            await message.channel.send(`User ${member.user.tag} does not have a submission`);
+                        }
+                    } else {
+                        await message.channel.send(`User \`${user}\` already has been accepted`);
                     }
                 } else {
                     await message.channel.send(`User \`${user}\` was not found`);
@@ -135,7 +144,7 @@ export default async function initDiscord(db: Connection) {
 
                 let member = getGuildMember(user, message.guild);
 
-                if (member !== undefined) {
+                if (member !== null) {
                     let status = await userStatus(db, member.id);
                     if (status === UserStatus.Registered) {
                         let realuser = await db.getRepository(RealUser).findOneOrFail(member.id);
@@ -145,8 +154,8 @@ export default async function initDiscord(db: Connection) {
                             .setTimestamp()
                             .setColor("#43b581")
                             .addField("First Name", realuser.firstname, true)
-                            .addField("First Name", realuser.lastname, true)
-                            .addField("Extra Info", realuser.info === "" ? "none" : realuser.info ));
+                            .addField("Last Name", realuser.lastname, true)
+                            .addField("Extra Info", realuser.info === "" ? "none" : realuser.info));
                     } else if (status === UserStatus.Pending) {
                         let submission = await db.getRepository(Submission).findOneOrFail(member.id);
                         await message.channel.send(new RichEmbed()
@@ -154,8 +163,8 @@ export default async function initDiscord(db: Connection) {
                             .setTimestamp()
                             .setColor("#faa61a")
                             .addField("First Name", submission.user.firstname, true)
-                            .addField("First Name", submission.user.lastname, true)
-                            .addField("Extra Info", submission.user.info === "" ? "none" : submission.user.info ));
+                            .addField("Last Name", submission.user.lastname, true)
+                            .addField("Extra Info", submission.user.info === "" ? "none" : submission.user.info));
                     } else {
                         await message.channel.send(new RichEmbed()
                             .setTitle(`User \`${member.user.tag}\` has not been registered`)
@@ -166,6 +175,32 @@ export default async function initDiscord(db: Connection) {
                     await message.channel.send(`User \`${user}\` was not found`);
                 }
 
+            } else if (content.toLowerCase() === "i am kinky") {
+                let role = message.guild.roles.find(x => x.name === "Kinky");
+
+                if (message.member.roles.some(x => x.id === role.id)) {
+                    let msg = await message.channel.send("You already have the role") as Message;
+                    // Delete after ten seconds
+                    client.setTimeout(async () => msg.delete(), 10000);
+                } else {
+                    await message.member.addRole(role);
+                    let msg = await message.channel.send(":wink:") as Message;
+                    // Delete after ten seconds
+                    client.setTimeout(async () => msg.delete(), 10000);
+                }
+            } else if (content.toLowerCase() === "i am not kinky") {
+                let role = message.guild.roles.find(x => x.name === "Kinky");
+
+                if (message.member.roles.some(x => x.id === role.id)) {
+                    await message.member.removeRole(role);
+                    let msg = await message.channel.send("If you say so") as Message;
+                    // Delete after ten seconds
+                    client.setTimeout(async () => msg.delete(), 10000);
+                } else {
+                    let msg =  await message.channel.send("You do not have the role") as Message;
+                    // Delete after ten seconds
+                    client.setTimeout(async () => msg.delete(), 10000);
+                }
             } else if (content.toLowerCase().includes("help")) {
                 let commands = [
                     {
@@ -182,6 +217,14 @@ export default async function initDiscord(db: Connection) {
                         description: "Remove a game role",
                         name: "i do not play",
                         params: "<game>"
+                    },
+                    {
+                        description: "Become kinky",
+                        name: "i am kinky"
+                    },
+                    {
+                        description: "Become less kinky",
+                        name: "i am not kinky"
                     },
                     {
                         description: "Get a list of games",
