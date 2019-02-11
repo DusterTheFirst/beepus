@@ -5,6 +5,7 @@
 import bodyparser from "body-parser";
 import compression from "compression";
 import cookieParser from "cookie-parser";
+import csrf from "csurf";
 import { Guild } from "discord.js";
 import express, { NextFunction, Request, Response } from "express";
 import handlebars from "express-handlebars";
@@ -28,6 +29,7 @@ export default function initWeb(port: number, guild: Guild, db: Connection) {
     app.use(compression());
     app.use(bodyparser.urlencoded({ extended: true }));
     app.use(cookieParser());
+    app.use(csrf({ cookie: true }));
     app.use(auth(guild, db));
 
     // SASS
@@ -64,6 +66,7 @@ export default function initWeb(port: number, guild: Guild, db: Connection) {
     // The welcome endpoint
     app.get("/welcome", (req, res) => {
         res.render("welcome", {
+            csrfToken: req.csrfToken(),
             member: req.member,
             realuser: req.realuser,
             realuserStatus: {
@@ -106,15 +109,27 @@ export default function initWeb(port: number, guild: Guild, db: Connection) {
     }));
 
     app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
-        res.render("error", {
-            error: "500",
-            message: "Internal error",
-            user: req.user
-        });
-        console.log(err);
+        if (isEBADCSRFTOKEN(err)) {
+            res.render("error", {
+                error: "403",
+                message: "Form tampered with",
+                user: req.user
+            });
+        } else {
+            res.render("error", {
+                error: "500",
+                message: "Internal error",
+                user: req.user
+            });
+        }
+        console.error(err);
     });
 
     app.listen(port);
+}
+
+function isEBADCSRFTOKEN(err: unknown): err is Error & { code: "EBADCSRFTOKEN" } {
+    return (err as { code: string }).code === "EBADCSRFTOKEN";
 }
 
 interface IWelcomeForm {
