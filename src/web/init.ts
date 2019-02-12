@@ -61,7 +61,7 @@ export default function initWeb(port: number, guild: Guild, db: Connection) {
     app.engine("hbs", handlebars({ extname: "hbs", layoutsDir: join(__dirname, "..", "..", "views") }));
     app.set("view engine", "hbs");
 
-    console.log(`Using handlebars in the '${join(__dirname, "..", "..", "views", "styles")}' directory`);
+    console.log(`Using handlebars in the '${join(__dirname, "..", "..", "views")}' directory`);
 
     // The welcome endpoint
     app.get("/welcome", (req, res) => {
