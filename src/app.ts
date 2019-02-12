@@ -23,4 +23,4 @@ import initWeb from "./web/init.js";
     });
 })()
     .then(() => console.log("Everything is up and running!"))
-    .catch((error) => console.error(error));
+    .catch((error) => console.error(error.toString()));
