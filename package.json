@@ -3,6 +3,11 @@
     "version": "0.0.1",
     "description": "A cool bot that does things",
     "main": "build/app.js",
+    "scripts": {
+        "build": "tsc -b",
+        "build:watch": "tsc -b -w",
+        "start": "node build/app.js"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/DusterTheFirst/beepus.git"

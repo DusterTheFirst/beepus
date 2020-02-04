@@ -55,14 +55,20 @@ export default async function initDiscord(db: Connection) {
         // Ignore self messages or from other bots
         if (message.author.bot) return;
 
+        const prefixRegex = new RegExp(`^(<@!?${client.user.id}>)\\s*`);
+
         if (message.mentions.everyone) {
             // Tell dummies to shut it
             await message.member.send(config.messages.everyone);
         } else if (message.channel.type === "dm") {
-            console.log(message.author, message.content);
-        } else if (message.content.startsWith(message.guild.me.user.toString())) {
+            console.log("New DM From: ", message.author.tag, message.content);
+        } else if (prefixRegex.test(message.content)) {
             // Commands
-            let content = message.content.replace(message.guild.me.user.toString(), "").trim();
+            // tslint:disable-next-line: no-non-null-assertion
+            const matchedPrefix = message.content.match(prefixRegex)![1];
+            const content = message.content.slice(matchedPrefix.length).trim();
+
+            console.log(content, message.content);
 
             // Command for game roles
             if (content.toLowerCase().startsWith("i play")) {
@@ -247,10 +253,10 @@ export default async function initDiscord(db: Connection) {
                         .setDescription(commands.map(x => `${message.guild.me.toString()} **${x.name}** ${x.params === undefined ? `- ${x.description}` : `${x.params} - ${x.description}`}`).join("\n"))
                         .setColor(message.guild.me.displayColor)
                 );
+            } else {
+                // Just say hi
+                await message.reply("Hi there!");
             }
-        } else if (message.mentions.users.has(message.guild.me.user.id)) {
-            // Just say hi
-            await message.reply("Hi there!");
         }
     });
 
