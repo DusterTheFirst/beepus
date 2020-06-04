@@ -6,6 +6,7 @@
     "scripts": {
         "build": "tsc -b",
         "build:watch": "tsc -b -w",
+        "lint": "tslint --project tsconfig.json",
         "start": "node build/app.js"
     },
     "repository": {

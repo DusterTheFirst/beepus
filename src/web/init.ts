@@ -36,7 +36,7 @@ export default function initWeb(port: number, guild: Guild, db: Connection) {
     app.use(sass({
         dest: join(__dirname, "..", "..", "views", "styles"),
         outputStyle: "compressed",
-        prefix:  "/styles",
+        prefix: "/styles",
         src: join(__dirname, "..", "..", "views", "sass")
     }));
     app.use("/styles", express.static(join(__dirname, "..", "..", "views", "styles")));
@@ -58,7 +58,7 @@ export default function initWeb(port: number, guild: Guild, db: Connection) {
     });
 
     // Handlebars
-    app.engine("hbs", handlebars({ extname: "hbs", layoutsDir: join(__dirname, "..", "..", "views") }) as (path: string, options: object, callback: (e: any, rendered: string) => void) => void);
+    app.engine("hbs", handlebars({ extname: "hbs", layoutsDir: join(__dirname, "..", "..", "views"), defaultLayout: undefined }) as (path: string, options: object, callback: (e: any, rendered: string) => void) => void);
     app.set("view engine", "hbs");
 
     console.log(`Using handlebars in the '${join(__dirname, "..", "..", "views")}' directory`);

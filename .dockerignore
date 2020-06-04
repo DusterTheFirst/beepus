@@ -1,0 +1,9 @@
+# Build files
+build
+**/*.css
+
+# Secret files
+**/secrets.json
+
+# DB
+**/*.sqlite
